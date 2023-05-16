@@ -2,27 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ene_3 : MonoBehaviour
+public class Ene_3 : MonoBehaviour, IObserver
 {
-	public float MovementSpeed;
+	[SerializeField] public float MovementSpeed;
 	// Tasa de fuego del enemigo
 	public float FireRate;
 	public float Damage;
-	public int EneHealth;
+	[SerializeField] public float EneHealth;
 	// Instancia de la prefab de bala del enemigo
 	public GameObject BulletPrefab;
 
-	// Enviado al método cuando se ha cargado
+
 	void Start()
 	{
-		// Direcciones de movimiento iniciales
+
+		GameManager.GetInstance().Attach(this);
+
 		Vector3 movementDirection = Vector3.down;
 		transform.position = new Vector3(Transform.position.x, Transform.position.y + 4f, Transform.position.z);
 		transform.LookAt(Vector3.zero);
 		StartCoroutine(MoveEnemy());
 	}
 
-	// Coroutine para mover al enemigo
+	public void Execute(ISubject subjet)
+    {
+		if(subjet is GameManager)
+        {
+			MovementSpeed = ((GameManager)subjet).Progresion;
+			EneHealth = ((GameManager)subjet).Progresion;
+		}
+    }
+
 	IEnumerator MoveEnemy()
 	{
 		while (true)
